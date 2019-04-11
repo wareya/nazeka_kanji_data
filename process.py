@@ -45,6 +45,12 @@ def is_special(text):
 def is_special_on_yomi(text):
     return is_on_yomi(text) and is_special(text)
 
+def kata_to_hira(text):
+    for c in text:
+        if is_katakana(c):
+            text = text.replace(c, chr(ord(c)-0x60))
+    return text
+
 joyo = OrderedDict()
 for line in open("joyo.txt", encoding="utf-8"):
     line = line.strip()
@@ -64,9 +70,9 @@ for line in open("joyo.txt", encoding="utf-8"):
     special_on = []
     for reading in readings:
         if is_special_on_yomi(reading):
-            special_on += [reading[1:-1]]
+            special_on += [kata_to_hira(reading[1:-1])]
         elif is_on_yomi(reading):
-            on += [reading]
+            on += [kata_to_hira(reading)]
         elif is_special(reading):
             special_kun += [reading[1:-1]]
         else:
