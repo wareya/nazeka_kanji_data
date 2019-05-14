@@ -108,9 +108,6 @@ for ent in root.iter(etree.Entity):
             ent.getparent().text += ent.tail
 root = root.getroot();
 
-# chars with incorrect stroke counts:
-# 稽 - 16, should be 15
-# there are probably many, MANY others, but this one is in the jouyou kanji.
 for entry in root.iter("character"):
     myentry = OrderedDict()
     char = entry.find("literal").text
@@ -191,6 +188,10 @@ for entry in root.iter("character"):
             myentry["os"] = f["os"]
         if len(f["ks"]) > 0:
             myentry["ks"] = f["ks"]
+    elif grade not in ["9", "10", "X"]:
+        print(f"jouyou grade mismatch for {char} ({grade})")
+        c = asdfawefasdf
+        
     
     if char in ids:
         myentry["z"] = ids[char]
