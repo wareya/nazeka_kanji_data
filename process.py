@@ -54,16 +54,20 @@ def kata_to_hira(text):
 joyo = OrderedDict()
 for line in open("joyo.txt", encoding="utf-8"):
     line = line.strip()
+    line = re.sub(r"[ ]?\[[^\]]*\]","",line)
     fields = line.split("\t")
     char = fields[0]
     strokes = int(fields[3])
     grade = fields[4]
     readings_text = fields[7]
-    readings_text = re.sub(r"[ ]?\[[^\]]*\]","",readings_text)
     if " " in readings_text:
         print(readings_text)
         a = kavfujwerwe
     readings = readings_text.split("、")
+    if len(readings) == 0:
+        print(fields[7])
+        print(readings_text)
+        a = kavfujwerwe
     kun = []
     on = []
     special_kun = []
@@ -84,6 +88,10 @@ for line in open("joyo.txt", encoding="utf-8"):
     data["o"] = on
     data["ks"] = special_kun
     data["os"] = special_on
+    if len(kun) == 0 and len(on) == 0 and len(special_kun) == 0 and len(special_on) == 0:
+        print(fields[7])
+        print(readings_text)
+        a = kavfujwerwe
     joyo[char] = data
 
 kanjidic = []
@@ -113,17 +121,62 @@ for entry in root.iter("character"):
         grade = grade.text
     strokes = int(entry.find("misc").find("stroke_count").text)
     
+    joyo_char = char
+    
     if char == "稽":
         strokes = 15
+    if char == "餌":
+        strokes = 15
+    if char == "牙":
+        strokes = 4
+    if char == "葛":
+        strokes = 12
+    if char == "僅":
+        strokes = 13
+    if char == "遡":
+        strokes = 14
+    if char == "遜":
+        strokes = 14
+    if char == "賭":
+        strokes = 16
+    if char == "謎":
+        strokes = 17
+    if char == "謎":
+        strokes = 17
+    if char == "餅":
+        strokes = 15
+    if char == "叱":
+        grade = "8"
+        joyo_char = "𠮟"
+    if char == "𠮟":
+        grade = "8"
+    if char == "剥":
+        grade = "8"
+        joyo_char = "剝"
+    if char == "剝":
+        grade = "8"
+    if char == "頬":
+        grade = "8"
+        joyo_char = "頰"
+    if char == "剝":
+        grade = "8"
+    if char == "填":
+        grade = "8"
+        joyo_char = "塡"
+    if char == "剝":
+        grade = "8"
+        
     
     myentry["c"] = char
     myentry["g"] = grade
     myentry["s"] = strokes
     
-    if char in joyo:
-        f = joyo[char]
-        if strokes != f["s"]:
+    if joyo_char in joyo:
+        f = joyo[joyo_char]
+        if strokes != f["s"] and char != "頬":
             print(f"stroke mismatch for {char}")
+            print(f"joyo: {f['s']}")
+            print(f"kanjidic: {strokes}")
             c = asdfawefasdf
         if f["g"] == "S" and grade != "8":
             print(f"jouyou grade mismatch for {char} ({f['g']} vs {grade})")
